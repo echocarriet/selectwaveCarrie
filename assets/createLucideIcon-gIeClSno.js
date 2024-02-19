@@ -1,4 +1,4 @@
-import{l as a}from"./index-TfBzq-Fi.js";/**
+import{k as a}from"./index-OJqz6Jto.js";/**
  * @license lucide-vue-next v0.322.0 - ISC
  *
  * This source code is licensed under the ISC license.
@@ -8,4 +8,4 @@ import{l as a}from"./index-TfBzq-Fi.js";/**
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
- */const h=t=>t.replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase(),k=(t,i)=>({size:r,strokeWidth:o=2,absoluteStrokeWidth:l,color:c,class:w,...n},{attrs:u,slots:s})=>a("svg",{...e,width:r||e.width,height:r||e.height,stroke:c||e.stroke,"stroke-width":l?Number(o)*24/Number(r):o,...u,class:["lucide",`lucide-${h(t)}`],...n},[...i.map(d=>a(...d)),...s.default?[s.default()]:[]]);export{k as c};
+ */const h=t=>t.replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase(),k=(t,i)=>({size:r,strokeWidth:o=2,absoluteStrokeWidth:c,color:l,class:w,...n},{attrs:u,slots:s})=>a("svg",{...e,width:r||e.width,height:r||e.height,stroke:l||e.stroke,"stroke-width":c?Number(o)*24/Number(r):o,...u,class:["lucide",`lucide-${h(t)}`],...n},[...i.map(d=>a(...d)),...s.default?[s.default()]:[]]);export{k as c};
