@@ -1,1 +1,0 @@
-import{_ as e,c as o,o as c}from"./index-rZlusHZs.js";const t={},s={style:{height:"200vh"},class:"max-w-screen-lg mx-auto"};function n(r,a){return c(),o("div",s,"eujowo")}const i=e(t,[["render",n]]);export{i as default};
