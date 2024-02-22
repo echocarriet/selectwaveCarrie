@@ -7,7 +7,7 @@
     pt-5 pb-10 md:pt-4 md:pb-16 px-3.5 md:px-5 mb-10">
       <div class="flex justify-between mb-7 md:mb-8">
         <div class="relative">
-          <button type="button" class="px-6 py-3 flex items-center justify-center rounded-3xl bg-white
+          <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-white
           text-gray-1 text-base font-medium outline outline-2 outline-gray-1
           hover:outline-primary hover:text-primary" @click="collapseModal.toggle()">
             篩選
@@ -34,8 +34,9 @@
             </ul>
           </div>
         </div>
-        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-3xl bg-gray-1
-          text-white text-base font-medium hover:bg-primary">
+        <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-gray-1
+          text-white text-base font-medium hover:bg-primary"
+          @click="$refs.AddPullModal.openModal()">
           建立新投票
         </button>
       </div>
@@ -89,21 +90,21 @@
               2024/2/28
             </td>
             <td class="px-6 py-4 hidden lg:table-cell">
-              <button type="button" class="hover:text-primary" @click="$refs.ShareModal.openModal()">
-                <Share2 class="w-full" />
+              <button type="button" class="hover:text-primary" @click="$refs.ShareModal.openModal">
+                <i class="bi bi-share w-full text-xl"></i>
               </button>
             </td>
             <td class="px-6 py-4 flex flex-col justify-center
             lg:justify-between lg:flex-row">
               <button type="button" class="hover:text-primary lg:hidden mb-3.5 lg:mb-0"
-                @click="$refs.ShareModal.openModal()">
-                <Share2 class="w-full" />
+                @click="$refs.ShareModal.openModal">
+                <i class="bi bi-share w-full text-xl"></i>
               </button>
-              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.DelModal.openModal()">
-                <Trash2 class="w-full" />
+              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.DelModal.openModal">
+                <i class="bi bi-trash3 w-full text-xl"></i>
               </button>
-              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0">
-                <Pencil class="w-full" />
+              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.EditPullModal.openModal">
+                <i class="bi bi-pencil w-full text-xl"></i>
               </button>
             </td>
           </tr>
@@ -118,7 +119,7 @@
           text-gray-1 bg-white border border-gray-4 rounded-lg
           hover:bg-primary-light hover:text-primary-dark mr-1.5">
             <span class="sr-only">回到第一頁</span>
-            <ChevronsLeft />
+            <i class="bi bi-chevron-double-left text-sm"></i>
           </a>
         </li>
         <li>
@@ -126,7 +127,7 @@
           text-gray-1 bg-white border border-gray-4 rounded-lg
           hover:bg-primary-light hover:text-primary-dark mr-1.5">
             <span class="sr-only">Previous</span>
-            <ChevronLeft />
+            <i class="bi bi-chevron-left text-sm"></i>
           </a>
         </li>
         <li>
@@ -148,7 +149,7 @@
           text-gray-1 bg-white border border-gray-4 rounded-lg
           hover:bg-primary-light hover:text-primary-dark mr-1.5">
             <span class="sr-only">Next</span>
-            <ChevronRight />
+            <i class="bi bi-chevron-right text-sm"></i>
           </a>
         </li>
         <li>
@@ -156,22 +157,22 @@
           text-gray-1 bg-white border border-gray-4 rounded-lg
           hover:bg-primary-light hover:text-primary-dark">
             <span class="sr-only">到最後一頁</span>
-            <ChevronsRight />
+            <i class="bi bi-chevron-double-right tex-sm"></i>
           </a>
         </li>
       </ul>
     </nav>
   </div>
-  <DelModal ref="DelModal" :delContent="delContent"></DelModal>
-  <shareModal ref="ShareModal"></shareModal>
-  <ComponentFooter></ComponentFooter>
+  <AddPullModal ref="AddPullModal" />
+  <EditPullModal ref="EditPullModal" />
+  <DelModal ref="DelModal" :delContent="delContent" />
+  <shareModal ref="ShareModal" />
+  <ComponentFooter />
 </template>
 <script>
-import {
-  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
-  Pencil, Share2, Trash2,
-} from 'lucide-vue-next';
+import AddPullModal from '@/components/backend/AddPullModal.vue';
 import DelModal from '@/components/backend/DelModal.vue';
+import EditPullModal from '@/components/backend/EditPullModal.vue';
 import NavbarBackend from '@/components/backend/NavbarBackend.vue';
 import NavbarVote from '@/components/backend/NavbarVote.vue';
 import ShareModal from '@/components/backend/ShareModal.vue';
@@ -188,13 +189,8 @@ export default {
     ShareModal,
     NavbarBackend,
     NavbarVote,
-    Trash2,
-    Pencil,
-    Share2,
-    ChevronsLeft,
-    ChevronLeft,
-    ChevronRight,
-    ChevronsRight,
+    AddPullModal,
+    EditPullModal,
   },
   data() {
     return {
@@ -203,6 +199,7 @@ export default {
     };
   },
   methods: {},
+  mounted() {},
 };
 </script>
 

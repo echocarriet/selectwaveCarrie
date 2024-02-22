@@ -15,6 +15,6 @@ export default {
     },
   },
   mounted() {
-    this.modal = new Modal(this.$refs.flowbiteModal);
+    this.modal = new Modal(this.$refs.flowbiteModal, { backdrop: 'static' });
   },
 };

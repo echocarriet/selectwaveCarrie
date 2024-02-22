@@ -72,6 +72,11 @@ const routes = [
         name: 'ResetPassword',
         component: () => import('../views/backend/ResetPassword.vue'),
       },
+      {
+        path: 'pushpic',
+        name: 'TestPushPic',
+        component: () => import('../views/backend/TestPushPic.vue'),
+      },
     ],
   },
 ];
