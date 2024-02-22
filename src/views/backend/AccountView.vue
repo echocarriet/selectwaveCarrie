@@ -53,13 +53,16 @@
               <label for="facebookUrl" class="block mb-2 text-base font-medium text-gray-1">
                 {{ socialMedia[index].type }} 社群連結
               </label>
-              <input type="url" :value="socialMedia[index].type === item.type ? `${socialMedia[index].id}` : '請填入社群網址'"
-                class="bg-white border border-gray-3 text-sm rounded-full
-              focus:ring-primary focus:border-primary block w-full px-3 py-4 mb-2" placeholder="請填入社群網址" />
+              <input type="url" class="bg-white border border-gray-3 text-sm rounded-full
+              focus:ring-primary focus:border-primary block w-full px-3 py-4 mb-2" placeholder="請填入社群網址"
+                v-model="socialMedia[index].id" />
             </div>
+            <!-- :value="socialMedia[index].type === item.type ? `${socialMedia[index].id}` : '請填入社群網址'" -->
           </template>
         </div>
         <!-- ➀ 社群連結 v-for 渲染出，但data沒得就無法渲染 -->
+        <!-- ➁ 社群連結  -->
+        <!-- ➁ 社群連結  -->
         <hr>
         <!-- 社群連結 label & input -->
         <div class="mb-4">
@@ -91,7 +94,8 @@
       </form>
     </div>
   </div>
-  {{ member.gender }}
+  {{ changesocialMedia }} <br>
+  {{ changesocialMedia2 }}
   <DelModal ref="DelModal" :delContent="delContent"></DelModal>
   <ComponentFooter></ComponentFooter>
 </template>
@@ -113,17 +117,22 @@ export default {
   data() {
     return {
       delContent: '「此帳號後，需重新建立帳號」',
+      socialMedia2: [],
       socialMedia: [
         {
-          type: 'twitter',
+          type: 'Facebook',
           id: 'johndoe',
         },
         {
-          type: 'faacebook',
-          id: 'Fb-johndoe',
+          type: 'Instagram',
+          id: '',
         },
         {
-          type: 'ig',
+          type: 'YouTube',
+          id: '',
+        },
+        {
+          type: 'PersonalUrl',
           id: '',
         },
       ],
@@ -186,6 +195,28 @@ export default {
           });
         });
     },
+  },
+  computed: {
+    changesocialMedia() {
+      return this.socialMedia;
+    },
+    changesocialMedia2() {
+      return this.socialMedia2;
+    },
+  },
+  watch: {
+    socialMedia: {
+      // 控制器(參數n為新值,參數o為舊值)
+      handler(n) {
+        // socialMedia有變動就push到遠端資料庫
+        this.socialMedia2.push(n);
+      },
+      // 會去定義它是否為深層監聽,此為固定結構
+      deep: true,
+    },
+    // socialMedia(n) {
+    //   console.log(n);
+    // },
   },
   mounted() {
     this.getToken();
