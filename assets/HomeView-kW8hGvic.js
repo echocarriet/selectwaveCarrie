@@ -1,1 +1,0 @@
-import{_ as t,c as o,a as r,w as a,r as s,o as c,b as n}from"./index-uMCFFkfm.js";const _={},l={style:{height:"200vh"},class:"max-w-screen-lg mx-auto"};function i(m,x){const e=s("router-link");return c(),o("div",l,[r(e,{class:"block hover:text-primary",target:"_blank",to:"/loginhex"},{default:a(()=>[n("六角 API 登入頁面")]),_:1})])}const h=t(_,[["render",i]]);export{h as default};
