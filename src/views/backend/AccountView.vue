@@ -37,20 +37,16 @@
         <div class="mb-4">
           <label for="birthday" class="block mb-2 text-base font-medium text-gray-1">生日</label>
           <input type="date" id="birthday" class="bg-white border border-gray-3 text-sm rounded-full
-              focus:ring-primary focus:border-primary block w-full px-3 py-4" />
+              focus:ring-primary focus:border-primary block w-full px-3 py-4" v-model="memberPerson.birthday" />
         </div>
-        <!-- <div class="mb-4">
-          <template v-for="(item, index) in socialMedia" :key="index">
-            <div class="mb-4">
-              <label for="facebookUrl" class="block mb-2 text-base font-medium text-gray-1">
-                {{ socialMedia[index].type }} 社群連結
-              </label>
-              <input type="url" class="bg-white border border-gray-3 text-sm rounded-full
+        <div class="mb-4" v-for="(item, index) in memberPerson.socialMedia" :key="index">
+          <label for="facebookUrl" class="block mb-2 text-base font-medium text-gray-1">
+            {{ memberPerson.socialMedia[index].type }} 社群連結
+          </label>
+          <input type="url" class="bg-white border border-gray-3 text-sm rounded-full
               focus:ring-primary focus:border-primary block w-full px-3 py-4 mb-2" placeholder="請填入社群網址"
-                v-model="socialMedia[index].id" />
-            </div>
-          </template>
-        </div> -->
+            v-model="memberPerson.socialMedia[index].id" />
+        </div>
         <button type="submit" class="text-white bg-gray-1 hover:bg-primary focus:ring-4
             focus:outline-none focus:ring-primary-light font-medium rounded-full
             text-base w-full sm:w-auto px-5 py-2.5 text-center">
@@ -81,24 +77,6 @@ export default {
     return {
       delContent: '「此帳號後，需重新建立帳號」',
       memberId: '',
-      socialMedia: [
-        {
-          type: 'Facebook',
-          id: '',
-        },
-        {
-          type: 'Instagram',
-          id: '',
-        },
-        {
-          type: 'YouTube',
-          id: '',
-        },
-        {
-          type: '個人網站',
-          id: '',
-        },
-      ],
       memberPerson: { // 根據ID獲取會員詳細資料
         follwing: [],
         followers: [],
@@ -146,6 +124,26 @@ export default {
       this.$http.get(apiUrl)
         .then((res) => {
           this.memberPerson = res.data.result;
+          if (!this.memberPerson.socialMedia.length) {
+            this.memberPerson.socialMedia.push(
+              {
+                type: 'Facebook',
+                id: '',
+              },
+              {
+                type: 'Instagram',
+                id: '',
+              },
+              {
+                type: 'YouTube',
+                id: '',
+              },
+              {
+                type: '個人網站',
+                id: '',
+              },
+            );
+          }
           console.log(this.memberPerson);
           // this.$swal({
           //   title: `${res.data.message}`,
@@ -160,7 +158,7 @@ export default {
     },
     updateMember() {
       const apiUrl = `${import.meta.env.VITE_APP_API_URL}/api/member/`;
-      this.$http.put(apiUrl)
+      this.$http.put(apiUrl, this.memberPerson)
         .then((res) => {
           console.log(res);
           this.getMemberInfo(this.memberId);

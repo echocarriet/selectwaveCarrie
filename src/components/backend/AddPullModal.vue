@@ -34,7 +34,7 @@
               複選題
             </button>
           </div>
-          <!-- 投票內容/單選 -->
+          <!-- 投票內容 -->
           <form>
             <div class="mb-4">
               <label for="title" class="block mb-2 text-base font-medium text-gray-1">標題</label>
@@ -43,47 +43,98 @@
             </div>
             <div class="mb-4">
               <p class="mb-2 text-base font-medium text-gray-1">選項內容</p>
-              <ul class="text-sm font-medium text-gray-1 rounded-lg">
-                <li class="w-full border-gray-200">
-                  <div class="flex items-center ps-3">
-                    <input id="list-radio-license" type="radio" value="" name="list-radio"
-                      class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary-light focus:ring-2">
-                    <label for="list-radio-license" class="w-full py-3 ms-2 text-sm font-medium">Driver License
-                    </label>
+              <ol class="text-sm font-medium text-gray-1 rounded-lg list-decimal px-4 marker:text-base">
+                <li class="w-full border-b border-gray-4 p-2 hover:bg-primary-light">
+                  <div class="flex flex-wrap space-y-2">
+                    <div class="basis-full">
+                      <img src="/images/loginCover.png" class="rounded-2xl object-cover object-center" alt="封面照"
+                        style="width: 100px; height: 100px;">
+                    </div>
+                    <div class="basis-full">
+                      <div class="flex flex-col mb-2">
+                        <input
+                          class="block mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-full cursor-pointer bg-gray-50 focus:outline-none"
+                          id="cover" type="file">
+                        <input type="text"
+                          class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full p-2.5"
+                          placeholder="請輸入內容">
+                      </div>
+                      <div class="flex">
+                        <button
+                          class="rounded-3xl border border-red-600 text-red-600 hover:bg-red-600 hover:text-white bg-white px-4 py-2.5 mr-3">移除</button>
+                      </div>
+                    </div>
                   </div>
                 </li>
-                <!-- <li class="w-full border-gray-200">
-                  <div class="flex items-center ps-3">
-                    <input id="list-radio-id" type="radio" value="" name="list-radio"
-                      class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary-light focus:ring-2">
-                    <label for="list-radio-id"
-                      class="w-full py-3 ms-2 text-sm font-medium">State ID</label>
+                <li class="w-full border-b border-gray-4 p-2 hover:bg-primary-light">
+                  <div class="flex flex-wrap space-y-2">
+                    <div class="basis-full">
+                      <img src="/images/loginCover.png" class="rounded-2xl object-cover object-center" alt="封面照"
+                        style="width: 100px; height: 100px;">
+                    </div>
+                    <div class="basis-full">
+                      <div class="flex flex-col mb-2">
+                        <input
+                          class="block mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-full cursor-pointer bg-gray-50 focus:outline-none"
+                          id="cover" type="file">
+                        <input type="text"
+                          class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full p-2.5"
+                          placeholder="請輸入內容">
+                      </div>
+                      <div class="flex">
+                        <button
+                          class="rounded-3xl border border-gray-1 hover:bg-gray-1 hover:text-white bg-white px-4 py-2.5 mr-3">新增</button>
+                        <button
+                          class="rounded-3xl border border-red-600 text-red-600 hover:bg-red-600 hover:text-white bg-white px-4 py-2.5 mr-3">移除</button>
+                      </div>
+                    </div>
                   </div>
-                </li> -->
-              </ul>
+                </li>
+              </ol>
             </div>
             <div class="mb-4">
               <label for="label" class="block mb-2 text-base font-medium text-gray-1">標籤</label>
               <p class="mb-2 text-sm text-gray-2">最多可新增三個標籤</p>
               <input id="label" list="label-tag"
-                class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full px-3 py-4">
+                class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full px-3 py-4 mb-6">
               <datalist id="label-tag">
                 <option value="電視節目">電視節目</option>
                 <option value="晚餐">晚餐</option>
                 <option value="2024">2024</option>
               </datalist>
-              <!-- 此區域會顯示所選標籤 -->
-              <template></template>
+              <!-- 顯示所選標籤 -->
+              <div class="flex flex-wrap space-x-1 space-y-1">
+                <div class="rounded-3xl text-gray-1 px-4 py-2.5 bg-primary-light">
+                  <span class="text-primary mr-1">#</span>
+                    <span class="mr-1">2024</span>
+                    <a class="cursor-pointer hover:text-primary-dark px-1">
+                      <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+                <div class="rounded-3xl text-gray-1 px-4 py-2.5 bg-primary-light">
+                  <span class="text-primary mr-1">#</span>
+                    <span class="mr-1">電視節目</span>
+                    <a class="cursor-pointer hover:text-primary-dark px-1">
+                      <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+                <div class="rounded-3xl text-gray-1 px-4 py-2.5 bg-primary-light">
+                  <span class="text-primary mr-1">#</span>
+                    <span class="mr-1">晚餐</span>
+                    <a class="cursor-pointer hover:text-primary-dark px-1">
+                      <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+              </div>
+              <!-- 顯示所選標籤 -->
             </div>
             <div class="mb-4">
               <label for="cover" class="block mb-2 text-base font-medium text-gray-1">上傳封面照</label>
               <input
                 class="block mb-2 w-full text-base text-gray-900 border border-gray-300 rounded-full cursor-pointer bg-gray-50 focus:outline-none"
                 id="cover" type="file">
-              <img
-                src="/images/loginCover.png"
-                class="rounded-3xl object-cover object-center"
-                alt="封面照" style="width: 150px; height: 150px;">
+              <img src="/images/loginCover.png" class="rounded-3xl object-cover object-center" alt="封面照"
+                style="width: 150px; height: 150px;">
             </div>
             <div class="mb-4">
               <label for="message" class="block mb-2 text-base font-medium text-gray-1">投票說明</label>
