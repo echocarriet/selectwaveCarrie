@@ -7,7 +7,8 @@
       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
       id="avatar-layout" type="file" @change="uploadFile">
       <hr>
-      {{ members }}
+      <img :src="imgUrl" class="rounded-3xl object-cover object-center" alt="封面照" style="width: 150px; height: 150px;">
+      <!-- {{ members }} -->
   </div>
 </template>
 <script>
@@ -17,6 +18,7 @@ export default {
       members: {
         result: {},
       },
+      imgUrl: '',
     };
   },
   methods: {
@@ -35,11 +37,13 @@ export default {
       const uploadFile = this.$refs.fileInput.files[0];
       const formData = new FormData();
       formData.append('file-to-upload', uploadFile);
+      console.log(uploadFile);
 
       const api = `${import.meta.env.VITE_APP_API_URL}/api/imgur/upload`;
       this.$http.post(api, formData, authoToken)
         .then((res) => {
           console.log(res);
+          this.imgUrl = res.data.result;
           this.$swal({
             title: `${res.data.message}`,
           });

@@ -103,8 +103,8 @@ export default {
         .then((response) => {
           if (response.data.status) {
             console.log(response);
-            const { _id } = response.data.result;
-            this.memberId = _id;
+            const { id } = response.data.result;
+            this.memberId = id;
             this.getMemberInfo(this.memberId);
           } else {
             this.$swal({

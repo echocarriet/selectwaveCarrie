@@ -35,8 +35,7 @@
           </div>
         </div>
         <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-gray-1
-          text-white text-base font-medium hover:bg-primary"
-          @click="$refs.AddPullModal.openModal()">
+          text-white text-base font-medium hover:bg-primary" @click="$refs.AddPullModal.openModal">
           建立新投票
         </button>
       </div>
@@ -68,46 +67,49 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="bg-white border-b dark:bg-gray-800 hover:bg-primary-light">
-            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-left
+          <template v-for="item in polls" :key="item.id">
+            <tr class="bg-white border-b hover:bg-primary-light">
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-left
             lg:text-center">
-              <p>最喜歡的電視節目</p>
-              <p class="block lg:hidden">狀態：公開</p>
-              <p class="block lg:hidden">人數：23</p>
-              <p class="block lg:hidden">開始：2024-01-02 23:00</p>
-              <p class="block lg:hidden">結束：2024-01-08 23:00</p>
-            </th>
-            <td class="px-6 py-4 hidden lg:table-cell">
-              Silver
-            </td>
-            <td class="px-6 py-4 hidden lg:table-cell">
-              Laptop
-            </td>
-            <td class="px-6 py-4 hidden lg:table-cell">
-              2024/2/01
-            </td>
-            <td class="px-6 py-4 hidden lg:table-cell">
-              2024/2/28
-            </td>
-            <td class="px-6 py-4 hidden lg:table-cell">
-              <button type="button" class="hover:text-primary" @click="$refs.ShareModal.openModal">
-                <i class="bi bi-share w-full text-xl"></i>
-              </button>
-            </td>
-            <td class="px-6 py-4 flex flex-col justify-center
+                <p>{{ item.title }}</p>
+                <p class="block lg:hidden">狀態：{{ item.isPrivate ? '公開' : '隱藏' }}</p>
+                <p class="block lg:hidden">人數：{{ item.totalVoters }}</p>
+                <p class="block lg:hidden">開始：{{ turnDate(item.startDate) }}</p>
+                <p class="block lg:hidden">結束：{{ turnDate(item.endDate) }}</p>
+              </th>
+              <td class="px-6 py-4 hidden lg:table-cell">
+                {{ item.isPrivate ? '公開' : '隱藏' }}
+              </td>
+              <td class="px-6 py-4 hidden lg:table-cell">
+                {{ item.totalVoters }}
+              </td>
+              <td class="px-6 py-4 hidden lg:table-cell">
+                {{ turnDate(item.startDate) }}
+                <!-- {{ turnDate(this.getDate) }} -->
+              </td>
+              <td class="px-6 py-4 hidden lg:table-cell">
+                {{ turnDate(item.endDate) }}
+              </td>
+              <td class="px-6 py-4 hidden lg:table-cell">
+                <button type="button" class="hover:text-primary" @click="$refs.ShareModal.openModal">
+                  <i class="bi bi-share w-full text-xl"></i>
+                </button>
+              </td>
+              <td class="px-6 py-4 flex flex-col justify-center
             lg:justify-between lg:flex-row">
-              <button type="button" class="hover:text-primary lg:hidden mb-3.5 lg:mb-0"
-                @click="$refs.ShareModal.openModal">
-                <i class="bi bi-share w-full text-xl"></i>
-              </button>
-              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.DelModal.openModal">
-                <i class="bi bi-trash3 w-full text-xl"></i>
-              </button>
-              <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.EditPullModal.openModal">
-                <i class="bi bi-pencil w-full text-xl"></i>
-              </button>
-            </td>
-          </tr>
+                <button type="button" class="hover:text-primary lg:hidden mb-3.5 lg:mb-0"
+                  @click="$refs.ShareModal.openModal">
+                  <i class="bi bi-share w-full text-xl"></i>
+                </button>
+                <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.DelModal.openModal">
+                  <i class="bi bi-trash3 w-full text-xl"></i>
+                </button>
+                <button type="button" class="hover:text-primary mb-3.5 lg:mb-0" @click="$refs.EditPullModal.openModal">
+                  <i class="bi bi-pencil w-full text-xl"></i>
+                </button>
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </div>
@@ -163,13 +165,14 @@
       </ul>
     </nav>
   </div>
-  <AddPullModal ref="AddPullModal" />
+  <AddPullModal ref="AddPullModal" @click="addPoll" />
   <EditPullModal ref="EditPullModal" />
-  <DelModal ref="DelModal" :delContent="delContent" />
-  <shareModal ref="ShareModal" />
-  <ComponentFooter />
+  <DelModal ref="DelModal" :delContent="delContent"></DelModal>
+  <shareModal ref="ShareModal"></shareModal>
+  <ComponentFooter></ComponentFooter>
 </template>
 <script>
+import { mapActions } from 'pinia';
 import AddPullModal from '@/components/backend/AddPullModal.vue';
 import DelModal from '@/components/backend/DelModal.vue';
 import EditPullModal from '@/components/backend/EditPullModal.vue';
@@ -179,6 +182,8 @@ import ShareModal from '@/components/backend/ShareModal.vue';
 import ComponentFooter from '@/components/ComponentFooter.vue';
 import Navbar from '@/components/NavbarEl.vue';
 import CollapseMixin from '@/mixins/CollapseMixin';
+import dateStore from '@/stores/date';
+import voteStore from '@/stores/vote';
 
 export default {
   mixins: [CollapseMixin],
@@ -196,10 +201,39 @@ export default {
     return {
       collapseModal: null,
       delContent: '「xxx投票」',
+      polls: [],
     };
   },
-  methods: {},
-  mounted() {},
+  methods: {
+    getPolls() {
+      const apiUrl = `${import.meta.env.VITE_APP_API_URL}/api/poll/`;
+      this.$http.get(apiUrl)
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res);
+            console.log(this.$route);
+            this.polls = res.data.polls;
+            // this.$swal({
+            //   title: `${res.data.message}`,
+            // });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$swal({
+            title: `${err.response.data.message}`,
+          });
+        });
+    },
+    ...mapActions(voteStore, ['addPoll']),
+    ...mapActions(dateStore, ['turnDate']),
+  },
+  // computed: {
+  //   ...mapState(voteStore, ['addPollData']), // 新增modal裡的資料，沒用到可刪
+  // },
+  mounted() {
+    this.getPolls();
+  },
 };
 </script>
 

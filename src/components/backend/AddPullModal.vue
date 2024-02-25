@@ -8,7 +8,7 @@
         <!-- Modal header -->
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t-2xl bg-white sticky top-0">
           <h3 class="text-xl font-semibold text-gray-900">
-            建立新投票
+            建立新投票 (單選)
           </h3>
           <button type="button"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -22,74 +22,49 @@
         </div>
         <!-- Modal body -->
         <div class="p-4 md:p-5 space-y-4">
-          <p class="mb-4 text-center">請點選「單選題」或「複選題」按鈕來新增投票。</p>
-          <!-- 新增按鈕, 投票內容出現按鈕消失 -->
-          <div class="flex justify-center">
-            <button class="px-6 py-3 mr-6 rounded-full bg-gray-1 text-white hover:bg-primary">
-              <i class="bi bi-ui-radios"></i>
-              單選題
-            </button>
-            <button class="px-6 py-3 rounded-full bg-gray-1 text-white hover:bg-primary">
-              <i class="bi bi-check-square"></i>
-              複選題
-            </button>
-          </div>
           <!-- 投票內容 -->
           <form>
             <div class="mb-4">
               <label for="title" class="block mb-2 text-base font-medium text-gray-1">標題</label>
               <input type="text" id="title"
-                class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full px-3 py-4">
+                class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full px-3 py-4"
+                v-model="addPollData.title">
             </div>
             <div class="mb-4">
               <p class="mb-2 text-base font-medium text-gray-1">選項內容</p>
               <ol class="text-sm font-medium text-gray-1 rounded-lg list-decimal px-4 marker:text-base">
-                <li class="w-full border-b border-gray-4 p-2 hover:bg-primary-light">
-                  <div class="flex flex-wrap space-y-2">
-                    <div class="basis-full">
-                      <img src="/images/loginCover.png" class="rounded-2xl object-cover object-center" alt="封面照"
-                        style="width: 100px; height: 100px;">
-                    </div>
-                    <div class="basis-full">
-                      <div class="flex flex-col mb-2">
-                        <input
-                          class="block mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-full cursor-pointer bg-gray-50 focus:outline-none"
-                          id="cover" type="file">
-                        <input type="text"
-                          class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full p-2.5"
-                          placeholder="請輸入內容">
+                <template v-for="(item, index) in optionsData" :key="index">
+                  <li class="w-full border-b border-gray-4 p-2 hover:bg-primary-light">
+                    <div class="flex flex-wrap space-y-2">
+                      <div class="basis-full">
+                        <img :src="item.imageUrl" class="rounded-2xl object-cover object-center"
+                          style="width: 100px; height: 100px;">
                       </div>
-                      <div class="flex">
-                        <button
-                          class="rounded-3xl border border-red-600 text-red-600 hover:bg-red-600 hover:text-white bg-white px-4 py-2.5 mr-3">移除</button>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li class="w-full border-b border-gray-4 p-2 hover:bg-primary-light">
-                  <div class="flex flex-wrap space-y-2">
-                    <div class="basis-full">
-                      <img src="/images/loginCover.png" class="rounded-2xl object-cover object-center" alt="封面照"
-                        style="width: 100px; height: 100px;">
-                    </div>
-                    <div class="basis-full">
-                      <div class="flex flex-col mb-2">
-                        <input
-                          class="block mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-full cursor-pointer bg-gray-50 focus:outline-none"
-                          id="cover" type="file">
-                        <input type="text"
-                          class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full p-2.5"
-                          placeholder="請輸入內容">
-                      </div>
-                      <div class="flex">
-                        <button
-                          class="rounded-3xl border border-gray-1 hover:bg-gray-1 hover:text-white bg-white px-4 py-2.5 mr-3">新增</button>
-                        <button
-                          class="rounded-3xl border border-red-600 text-red-600 hover:bg-red-600 hover:text-white bg-white px-4 py-2.5 mr-3">移除</button>
+                      <div class="basis-full">
+                        <div class="flex flex-col mb-2">
+                          <input
+                            class="block mb-2 w-full text-sm text-gray-900 border border-gray-300 rounded-full cursor-pointer bg-gray-50 focus:outline-none"
+                            id="cover" type="file" ref="fileInputOption" @change="uploadFile(index)">
+                          <input type="text"
+                            class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full p-2.5"
+                            placeholder="請輸入內容" v-model="item.title">
+                        </div>
+                        <div class="flex" v-if="optionsData.length > 1">
+                          <button
+                            class="rounded-3xl border border-red-600 text-red-600 hover:bg-red-600 hover:text-white bg-white px-4 py-2.5 mr-3"
+                            @click="optionsData.splice(index, 1)">
+                            移除
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </li>
+                  </li>
+                </template>
+                <button
+                  class="rounded-3xl border border-gray-1 hover:bg-gray-1 hover:text-white bg-white px-4 py-2.5 mt-3 w-full"
+                  @click="createOption">
+                  新增選項
+                </button>
               </ol>
             </div>
             <div class="mb-4">
@@ -106,24 +81,24 @@
               <div class="flex flex-wrap space-x-1 space-y-1">
                 <div class="rounded-3xl text-gray-1 px-4 py-2.5 bg-primary-light">
                   <span class="text-primary mr-1">#</span>
-                    <span class="mr-1">2024</span>
-                    <a class="cursor-pointer hover:text-primary-dark px-1">
-                      <i class="bi bi-x-lg"></i>
-                    </a>
+                  <span class="mr-1">2024</span>
+                  <a class="cursor-pointer hover:text-primary-dark px-1">
+                    <i class="bi bi-x-lg"></i>
+                  </a>
                 </div>
                 <div class="rounded-3xl text-gray-1 px-4 py-2.5 bg-primary-light">
                   <span class="text-primary mr-1">#</span>
-                    <span class="mr-1">電視節目</span>
-                    <a class="cursor-pointer hover:text-primary-dark px-1">
-                      <i class="bi bi-x-lg"></i>
-                    </a>
+                  <span class="mr-1">電視節目</span>
+                  <a class="cursor-pointer hover:text-primary-dark px-1">
+                    <i class="bi bi-x-lg"></i>
+                  </a>
                 </div>
                 <div class="rounded-3xl text-gray-1 px-4 py-2.5 bg-primary-light">
                   <span class="text-primary mr-1">#</span>
-                    <span class="mr-1">晚餐</span>
-                    <a class="cursor-pointer hover:text-primary-dark px-1">
-                      <i class="bi bi-x-lg"></i>
-                    </a>
+                  <span class="mr-1">晚餐</span>
+                  <a class="cursor-pointer hover:text-primary-dark px-1">
+                    <i class="bi bi-x-lg"></i>
+                  </a>
                 </div>
               </div>
               <!-- 顯示所選標籤 -->
@@ -132,15 +107,16 @@
               <label for="cover" class="block mb-2 text-base font-medium text-gray-1">上傳封面照</label>
               <input
                 class="block mb-2 w-full text-base text-gray-900 border border-gray-300 rounded-full cursor-pointer bg-gray-50 focus:outline-none"
-                id="cover" type="file">
-              <img src="/images/loginCover.png" class="rounded-3xl object-cover object-center" alt="封面照"
+                id="cover" type="file" ref="fileInput" @change="uploadCoverFile">
+              <img :src="addPollData.imageUrl" class="rounded-3xl object-cover object-center" alt="封面照"
                 style="width: 150px; height: 150px;">
             </div>
             <div class="mb-4">
               <label for="message" class="block mb-2 text-base font-medium text-gray-1">投票說明</label>
               <textarea id="message" rows="4"
                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary focus:border-primary"
-                placeholder="請在此寫下投票說明.."></textarea>
+                placeholder="請在此寫下投票說明.." v-model="addPollData.description">
+              </textarea>
               <hr>
 
             </div>
@@ -158,7 +134,9 @@
                 <div class="flex items-center w/1/5">
                   <input id="checked-checkbox" type="checkbox" value=""
                     class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary-light focus:ring-2">
-                  <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900">立即開始</label>
+                  <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900">
+                    立即開始
+                  </label>
                 </div>
               </div>
               <div class="flex">
@@ -176,14 +154,16 @@
                 <li class="border-gray-200">
                   <div class="flex items-center ps-3">
                     <input id="open" type="radio" name="list-radio"
-                      class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary-light focus:ring-2">
+                      class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary-light focus:ring-2"
+                      value="true" v-model="addPollData.isPrivate">
                     <label for="open" class="w-full py-3 ms-2 text-sm font-medium">公開</label>
                   </div>
                 </li>
                 <li class="border-gray-200">
                   <div class="flex items-center ps-3">
                     <input id="hide" type="radio" name="list-radio"
-                      class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary-light focus:ring-2">
+                      class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary-light focus:ring-2"
+                      value="false" v-model="addPollData.isPrivate">
                     <label for="hide" class="w-full py-3 ms-2 text-sm font-medium">隱藏</label>
                   </div>
                 </li>
@@ -206,14 +186,96 @@
   </div>
 </template>
 <script>
+// import { mapActions, mapState } from 'pinia';
+import { mapState } from 'pinia';
 import ModalMixin from '@/mixins/ModalMixin';
+import voteStore from '@/stores/vote';
 
 export default {
+
   mixins: [ModalMixin],
+  // props: ['optionsDataProps'],
   data() {
     return {
       modal: null,
+      // addPollData: {},
     };
+  },
+  methods: {
+    uploadCoverFile() {
+      // 投票票券封面
+      const uploadFile = this.$refs.fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file-to-upload', uploadFile);
+      const token = document.cookie.replace(
+        /(?:(?:^|.*;\s*)selectWaveToken\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+      );
+      this.$http.defaults.headers.common.Authorization = token;
+      const authToken = {
+        headers: {
+          Authorization: token,
+        },
+      };
+      const api = `${import.meta.env.VITE_APP_API_URL}/api/imgur/upload`;
+      this.$http.post(api, formData, authToken)
+        .then((res) => {
+          console.log(res);
+          this.addPollData.imageUrl = res.data.result;
+        })
+        .catch((err) => {
+          this.$swal({
+            title: `${err.response.data.message}`,
+          });
+        });
+    },
+    uploadFile(index) {
+      // 選項內容圖片
+      const uploadFile = this.$refs.fileInputOption[index].files[0];
+      const formData = new FormData();
+      formData.append('file-to-upload', uploadFile);
+
+      const token = document.cookie.replace(
+        /(?:(?:^|.*;\s*)selectWaveToken\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+      );
+      this.$http.defaults.headers.common.Authorization = token;
+      const authToken = {
+        headers: {
+          Authorization: token,
+        },
+      };
+
+      const api = `${import.meta.env.VITE_APP_API_URL}/api/imgur/upload`;
+      this.$http.post(api, formData, authToken)
+        .then((res) => {
+          this.optionsData[index].imageUrl = res.data.result;
+          this.$swal({
+            title: `${res.data.message}`,
+          });
+        })
+        .catch((err) => {
+          this.$swal({
+            title: `${err.response.data.message}`,
+          });
+        });
+    },
+    createOption() {
+      // 新增選項內容欄位
+      this.optionsData.push(
+        {
+          title: '',
+          imageUrl: 'https://imgur.com/TECsq2J.png',
+        },
+      );
+    },
+  },
+  computed: {
+    ...mapState(voteStore, ['addPollData']),
+    ...mapState(voteStore, ['optionsData']),
+    // ...mapState(pushImg, ['optionsData']),
+  },
+  mounted() {
   },
 };
 </script>
