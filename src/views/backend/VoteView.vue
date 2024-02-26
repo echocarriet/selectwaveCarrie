@@ -35,7 +35,7 @@
           </div>
         </div>
         <button type="button" class="px-6 py-3 flex items-center justify-center rounded-full bg-gray-1
-          text-white text-base font-medium hover:bg-primary" @click="$refs.AddPullModal.openModal">
+          text-white text-base font-medium hover:bg-primary" @click="openModal">
           建立新投票
         </button>
       </div>
@@ -165,7 +165,13 @@
       </ul>
     </nav>
   </div>
-  <AddPullModal ref="AddPullModal" @click="addPoll" />
+  <!-- <AddPullModal ref="AddPullModal" @click="addPoll" /> -->
+  <AddPullModal ref="AddPullModal"
+  :addPollData="addPollData"
+  :optionsData="addPollData.optionsData"
+  :selectedTagsProps="addPollData.tags"
+  :allTags="allTags"
+  @update-poll="updateNewPoll" />
   <EditPullModal ref="EditPullModal" />
   <DelModal ref="DelModal" :delContent="delContent"></DelModal>
   <shareModal ref="ShareModal"></shareModal>
@@ -183,7 +189,6 @@ import ComponentFooter from '@/components/ComponentFooter.vue';
 import Navbar from '@/components/NavbarEl.vue';
 import CollapseMixin from '@/mixins/CollapseMixin';
 import dateStore from '@/stores/date';
-import voteStore from '@/stores/vote';
 
 export default {
   mixins: [CollapseMixin],
@@ -202,6 +207,23 @@ export default {
       collapseModal: null,
       delContent: '「xxx投票」',
       polls: [],
+      addPollData: {
+        title: '',
+        description: '',
+        imageUrl: 'https://i.imgur.com/D3hp8H6.png',
+        tags: [],
+        startDate: '',
+        endDate: '',
+        isPrivate: false,
+        optionsData: [
+          {
+            title: '',
+            imageUrl: 'https://imgur.com/TECsq2J.png',
+          },
+        ],
+        status: 'active',
+      },
+      allTags: [],
     };
   },
   methods: {
@@ -210,9 +232,11 @@ export default {
       this.$http.get(apiUrl)
         .then((res) => {
           if (res.status === 200) {
-            console.log(res);
-            console.log(this.$route);
+            console.log(res.data.polls);
             this.polls = res.data.polls;
+            this.allTags = this.polls.flatMap((poll) => poll.tags);
+            console.log(this.allTags);
+
             // this.$swal({
             //   title: `${res.data.message}`,
             // });
@@ -225,12 +249,24 @@ export default {
           });
         });
     },
-    ...mapActions(voteStore, ['addPoll']),
+    openModal() {
+      this.addPollData = {
+        imageUrl: 'https://i.imgur.com/D3hp8H6.png',
+        optionsData: [
+          {
+            title: '',
+            imageUrl: 'https://imgur.com/TECsq2J.png',
+          },
+        ],
+      };
+      this.$refs.AddPullModal.openModal();
+    },
+    updateNewPoll() {
+      console.log(this.addPollData);
+      this.$refs.AddPullModal.hideModal();
+    },
     ...mapActions(dateStore, ['turnDate']),
   },
-  // computed: {
-  //   ...mapState(voteStore, ['addPollData']), // 新增modal裡的資料，沒用到可刪
-  // },
   mounted() {
     this.getPolls();
   },
