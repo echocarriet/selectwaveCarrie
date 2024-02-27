@@ -166,12 +166,8 @@
     </nav>
   </div>
   <!-- <AddPullModal ref="AddPullModal" @click="addPoll" /> -->
-  <AddPullModal ref="AddPullModal"
-  :addPollData="addPollData"
-  :optionsData="addPollData.optionsData"
-  :selectedTagsProps="addPollData.tags"
-  :allTags="allTags"
-  @update-poll="updateNewPoll" />
+  <AddPullModal ref="AddPullModal" :addPollData="addPollData" :optionsData="addPollData.optionsData"
+    :selectedTagsProps="addPollData.tags" :allTags="allTags" @update-poll="updateNewPoll" />
   <EditPullModal ref="EditPullModal" />
   <DelModal ref="DelModal" :delContent="delContent"></DelModal>
   <shareModal ref="ShareModal"></shareModal>
@@ -250,15 +246,25 @@ export default {
         });
     },
     openModal() {
+      // 時間格式轉換: Mon Feb 26 2024 17:07:15 GMT+0800 (台北標準時間) → YYYY-MM-DDTHH:mm:ss.sssZ
+      const currentDate = new Date();
+      const isoDateString = currentDate.toISOString();
+      let startDate = `${isoDateString.slice(0, 23)}Z`;
+      const taipeiDate = new Date(currentDate.getTime() + 8 * 60 * 60 * 1000);
+      startDate = `${taipeiDate.toISOString().slice(0, 23)}Z`;
+
       this.addPollData = {
         imageUrl: 'https://i.imgur.com/D3hp8H6.png',
         optionsData: [
           {
             title: '',
             imageUrl: 'https://imgur.com/TECsq2J.png',
+            startDate,
           },
         ],
+        startDate,
       };
+      console.log('voteView回傳', this.addPollData);
       this.$refs.AddPullModal.openModal();
     },
     updateNewPoll() {
