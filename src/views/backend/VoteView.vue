@@ -12,7 +12,7 @@
           hover:outline-primary hover:text-primary" @click="collapseModal.toggle()">
             篩選
           </button>
-          <!-- Dropdown menu -->
+          <!-- Dropdown menu 篩選 -->
           <div ref="flowbiteCollapse"
             class="absolute top-14 z-10 hidden font-normal bg-white divide-y rounded-2xl shadow-lg w-44 animate-fade-down animate-once animate-ease-in-out">
             <ul class="py-3 text-sm text-gray-700">
@@ -20,7 +20,7 @@
                 <a href="#" class="block px-7 py-2 hover:bg-gray-100">所有投票</a>
               </li>
               <li>
-                <a href="#" class="block px-7 py-2 hover:bg-gray-100">投票狀態：私人</a>
+                <a href="#" class="block px-7 py-2 hover:bg-gray-100">投票狀態：隱藏</a>
               </li>
               <li>
                 <a href="#" class="block px-7 py-2 hover:bg-gray-100">投票狀態：公開</a>
@@ -67,7 +67,7 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="item in polls" :key="item.id">
+          <template v-for="item in memberPolls.polls" :key="item.id">
             <tr class="bg-white border-b hover:bg-primary-light">
               <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap text-left
             lg:text-center">
@@ -85,7 +85,6 @@
               </td>
               <td class="px-6 py-4 hidden lg:table-cell">
                 {{ turnDate(item.startDate) }}
-                <!-- {{ turnDate(this.getDate) }} -->
               </td>
               <td class="px-6 py-4 hidden lg:table-cell">
                 {{ turnDate(item.endDate) }}
@@ -113,59 +112,8 @@
         </tbody>
       </table>
     </div>
-    <!-- 頁碼 -->
-    <nav>
-      <ul class="inline-flex -space-x-px text-base h-10 w-full justify-center">
-        <li>
-          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
-          text-gray-1 bg-white border border-gray-4 rounded-lg
-          hover:bg-primary-light hover:text-primary-dark mr-1.5">
-            <span class="sr-only">回到第一頁</span>
-            <i class="bi bi-chevron-double-left text-sm"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
-          text-gray-1 bg-white border border-gray-4 rounded-lg
-          hover:bg-primary-light hover:text-primary-dark mr-1.5">
-            <span class="sr-only">Previous</span>
-            <i class="bi bi-chevron-left text-sm"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
-          text-gray-1 bg-white border border-gray-4 rounded-lg
-          hover:bg-primary-light hover:text-primary-dark mr-1.5">
-            1
-          </a>
-        </li>
-        <li>
-          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
-          text-gray-1 bg-white border border-gray-4 rounded-lg
-          hover:bg-primary-light hover:text-primary-dark mr-1.5">
-            2
-          </a>
-        </li>
-        <li>
-          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
-          text-gray-1 bg-white border border-gray-4 rounded-lg
-          hover:bg-primary-light hover:text-primary-dark mr-1.5">
-            <span class="sr-only">Next</span>
-            <i class="bi bi-chevron-right text-sm"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#" class="pagination-w flex items-center justify-center p-2 leading-tight
-          text-gray-1 bg-white border border-gray-4 rounded-lg
-          hover:bg-primary-light hover:text-primary-dark">
-            <span class="sr-only">到最後一頁</span>
-            <i class="bi bi-chevron-double-right tex-sm"></i>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <Pagination />
   </div>
-  <!-- <AddPullModal ref="AddPullModal" @click="addPoll" /> -->
   <AddPullModal ref="AddPullModal" :addPollData="addPollData" :optionsData="addPollData.optionsData"
     :selectedTagsProps="addPollData.tags" :allTags="allTags" @update-poll="updateNewPoll" />
   <EditPullModal ref="EditPullModal" />
@@ -183,6 +131,7 @@ import NavbarVote from '@/components/backend/NavbarVote.vue';
 import ShareModal from '@/components/backend/ShareModal.vue';
 import ComponentFooter from '@/components/ComponentFooter.vue';
 import Navbar from '@/components/NavbarEl.vue';
+import Pagination from '@/components/PaginationView.vue';
 import CollapseMixin from '@/mixins/CollapseMixin';
 import dateStore from '@/stores/date';
 
@@ -197,12 +146,17 @@ export default {
     NavbarVote,
     AddPullModal,
     EditPullModal,
+    Pagination,
   },
   data() {
     return {
+      memberId: '',
+      isNew: false,
       collapseModal: null,
       delContent: '「xxx投票」',
       polls: [],
+      memberPolls: [
+      ],
       addPollData: {
         title: '',
         description: '',
@@ -223,16 +177,71 @@ export default {
     };
   },
   methods: {
+    getToken() {
+      // 從 cookie 取出 token，所有 axios 請求都會加上 token
+      const token = document.cookie.replace(
+        /(?:(?:^|.*;\s*)selectWaveToken\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+      );
+      this.$http.defaults.headers.common.Authorization = token;
+      // 檢查用戶是否仍持續登入API
+      const api = `${import.meta.env.VITE_APP_API_URL}/api/auth/check`;
+      this.$http.get(api, {
+        headers: {
+          Authorization: token,
+        },
+      })
+        .then((response) => {
+          if (response.data.status) {
+            const { id } = response.data.result;
+            this.memberId = id;
+            this.getMemberPolls();
+          } else {
+            this.$swal({
+              title: '登入失敗，請重新登入',
+            });
+            this.$router.push('/login');
+          }
+        })
+        .catch((err) => {
+          this.$swal({
+            title: `${err.response.data.message}`,
+          });
+        });
+    },
+    getMemberPolls() {
+      const apiUrl = `${import.meta.env.VITE_APP_API_URL}/api/poll?createdBy=${this.memberId}`;
+      this.$http.get(apiUrl)
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res);
+            this.memberPolls = res.data;
+            // this.$swal({
+            //   title: `${res.data.message}`,
+            // });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$swal({
+            title: `${err.response.data.message}`,
+          });
+        });
+    },
     getPolls() {
       const apiUrl = `${import.meta.env.VITE_APP_API_URL}/api/poll/`;
       this.$http.get(apiUrl)
         .then((res) => {
           if (res.status === 200) {
-            console.log(res.data.polls);
+            console.log(res);
+            // 取所有會員的投票明細與標籤
             this.polls = res.data.polls;
-            this.allTags = this.polls.flatMap((poll) => poll.tags);
-            console.log(this.allTags);
-
+            const allTags = this.polls.flatMap((poll) => poll.tags);
+            const filterAlltags = new Set(allTags);
+            this.allTags = [...filterAlltags];
+            // 取登入會員的投票明細
+            // this.memberPolls = this.polls.filter((item) => item.createdBy.id === this.memberId);
+            // console.log(this.memberId);
             // this.$swal({
             //   title: `${res.data.message}`,
             // });
@@ -263,18 +272,49 @@ export default {
           },
         ],
         startDate,
+        isPrivate: false,
+        tags: [],
       };
       console.log('voteView回傳', this.addPollData);
       this.$refs.AddPullModal.openModal();
     },
+    // 取得member id後記得加入
     updateNewPoll() {
+      // const token = document.cookie.replace(
+      //   /(?:(?:^|.*;\s*)selectWaveToken\s*=\s*([^;]*).*$)|^.*$/,
+      //   '$1',
+      // );
+      // this.$http.defaults.headers.common.Authorization = token;
+      // const authToken = {
+      //   headers: {
+      //     Authorization: token,
+      //   },
+      // };
+      const apiUrl = `${import.meta.env.VITE_APP_API_URL}/api/poll/`;
+      this.$http.post(apiUrl, this.addPollData)
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res);
+            this.$swal({
+              title: `${res.data.message}`,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$swal({
+            title: `${err.response.data.message}`,
+          });
+        });
       console.log(this.addPollData);
       this.$refs.AddPullModal.hideModal();
     },
     ...mapActions(dateStore, ['turnDate']),
   },
   mounted() {
+    this.getToken();
     this.getPolls();
+    // this.getMemberPolls();
   },
 };
 </script>

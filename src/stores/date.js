@@ -6,7 +6,7 @@ export default defineStore('dateStore', {
     turnDate(time) {
       // 時間格式轉換 YYYY-MM-DDTHH:mm:ss.sssZ → YYYY-MM-DD
       if (time === null || !time) {
-        return '未設定';
+        return '無期限';
       }
       const date = new Date(time);
       const year = date.getFullYear();

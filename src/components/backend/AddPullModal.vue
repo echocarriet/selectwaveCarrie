@@ -25,13 +25,13 @@
           <!-- 投票內容 -->
           <form>
             <div class="mb-4">
-              <label for="title" class="block mb-2 text-base font-medium text-gray-1">標題</label>
+              <label for="title" class="block mb-2 text-base font-medium text-gray-1">標題*</label>
               <input type="text" id="title"
                 class="bg-white border border-gray-3 text-sm rounded-full focus:ring-primary focus:border-primary block w-full px-3 py-4"
                 v-model="addPollDataModal.title">
             </div>
             <div class="mb-4">
-              <p class="mb-2 text-base font-medium text-gray-1">選項內容</p>
+              <p class="mb-2 text-base font-medium text-gray-1">選項內容*</p>
               <ol class="text-sm font-medium text-gray-1 rounded-lg list-decimal px-4 marker:text-base">
                 <template v-for="(item, index) in optionsData" :key="index">
                   <li class="w-full border-b border-gray-4 p-2 hover:bg-primary-light">
@@ -100,7 +100,7 @@
                 style="width: 150px; height: 150px;">
             </div>
             <div class="mb-4">
-              <label for="message" class="block mb-2 text-base font-medium text-gray-1">投票說明</label>
+              <label for="message" class="block mb-2 text-base font-medium text-gray-1">投票說明*</label>
               <textarea id="message" rows="4"
                 class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary focus:border-primary"
                 placeholder="請在此寫下投票說明.." v-model="addPollDataModal.description">
@@ -183,8 +183,10 @@
           <button type="button"
             class="px-6 py-3 ms-3 text-base font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 focus:z-10 focus:ring-4 focus:ring-gray-100 hover:text-white hover:bg-gray-3"
             @click.prevent="modal.hide()">取消</button>
-          <p class="ms-2">開始:{{ this.addPollDataModal.startDate }}/ {{ startDate }}</p>
-          <p class="ms-2">結束:{{ this.addPollDataModal.endDate }}/ {{ endDate }}</p>
+            <!-- 測試用，記得刪 -->
+            <p class="ms-2">開始:{{ this.addPollDataModal.startDate }}/ {{ startDate }}</p>
+            <p class="ms-2">結束:{{ this.addPollDataModal.endDate }}/ {{ endDate }}</p>
+            <!-- 測試用，記得刪 -->
         </div>
       </div>
     </div>
@@ -281,6 +283,7 @@ export default {
       );
     },
     changeTag() {
+      // 標籤
       const selectedValue = this.$refs.labelInput.value;
       if (selectedValue) {
         if (!this.selectedTags) {
@@ -320,7 +323,7 @@ export default {
         this.addPollDataModal = this.addPollData;
         this.optionsDataModal = this.optionsData;
         this.selectedTags = this.selectedTagsProps;
-        // ===== 處理開始日期
+        // ===== 處理開始日期(開始日期預設打開Modal就產生當下時間)
         // addPollData.startDate格式為YYYY-MM-DDTHH:mm:ss.sssZ
         // 使用.split('T'))變成['YYYY-MM-DD', 'mm:ss.sssZ']
         // this.startDate 就會等於YYYY-MM-DD ,因為v-model綁定可以正確顯示在開始日期input上

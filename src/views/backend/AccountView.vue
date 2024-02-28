@@ -36,8 +36,15 @@
         </div>
         <div class="mb-4">
           <label for="birthday" class="block mb-2 text-base font-medium text-gray-1">生日</label>
-          <input type="date" id="birthday" class="bg-white border border-gray-3 text-sm rounded-full
-              focus:ring-primary focus:border-primary block w-full px-3 py-4" v-model="memberPerson.birthday" />
+          <input v-if="!memberPerson.birthday"
+          type="date" id="birthday" class="bg-white border border-gray-3 text-sm rounded-full
+              focus:ring-primary focus:border-primary block w-full px-3 py-4"
+              v-model="birthday"
+              @input="clickDate" />
+          <input v-else type="date" id="birthday" class="bg-white border border-gray-3 text-sm rounded-full
+          focus:ring-primary focus:border-primary block w-full px-3 py-4"
+          v-model="birthday"
+          @input="clickDate" />
         </div>
         <div class="mb-4" v-for="(item, index) in memberPerson.socialMedia" :key="index">
           <label for="facebookUrl" class="block mb-2 text-base font-medium text-gray-1">
@@ -83,6 +90,7 @@ export default {
         socialMedia: [],
         likedPolls: [],
       },
+      birthday: '',
     };
   },
   methods: {
@@ -172,6 +180,31 @@ export default {
             title: `${err.response.data.message}`,
           });
         });
+    },
+    clickDate() {
+      if (this.birthday) {
+        const selectedDateTime = new Date(this.birthday);
+
+        // 取得各部分日期時間的數值
+        const year = selectedDateTime.getFullYear();
+        const month = String(selectedDateTime.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDateTime.getDate()).padStart(2, '0');
+        const hours = String(selectedDateTime.getHours()).padStart(2, '0');
+        const minutes = String(selectedDateTime.getMinutes()).padStart(2, '0');
+        const seconds = String(selectedDateTime.getSeconds()).padStart(2, '0');
+        const milliseconds = String(selectedDateTime.getMilliseconds()).padStart(3, '0');
+        // 生成格式化後的日期時間字串
+        const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+        this.memberPerson.birthday = formattedDateTime;
+      }
+    },
+  },
+  watch: {
+    memberPerson: {
+      handler() {
+        [this.birthday] = this.memberPerson.birthday.split('T');
+      },
+      deep: true,
     },
   },
   mounted() {
